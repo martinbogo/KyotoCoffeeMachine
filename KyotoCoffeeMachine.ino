@@ -1,30 +1,44 @@
 /*
  * Tinker and Twist
  * Kyoto Cold Drip Coffee Maker
- * Copyright 2009 - GPL v3.0
- * V1.0.2
+ * Copyright 2018 - GPL v3.0
+ * 
+ * Author : Martin Bogomolni <martinbogo@gmail.com>
  * 
  * This code provides control for our Kyoto-style cold drip
  * coffee maker.  Hardware required is an Arduino Uno or 
  * similar board, an Adafruit RGBLCDShield, and an Adafruit
  * stepper/motor shield board.
  * 
+ * This project was inspired by the awesome coffee machine that
+ * sits in the windowfront of the Ada's Technical Books and Cafe 
+ * in Seattle WA.  ( http://www.seattletechnicalbooks.com/ )
+ * 
+ * To build this machine, you will need the following:
+ * 
+ * Yama Glass Kyoto Style Coffee Machine : http://a.co/4k3O1dN
+ * 
  * Arduino Uno : https://www.adafruit.com/product/50
  * RGBLCDShield : https://www.adafruit.com/product/714
  * Stepper/Motor Shield : https://www.adafruit.com/product/1438
+ * 12V 1A Power Supply : https://www.adafruit.com/product/798
  * 
  * A quiet solenoid can be sourced from Ada Techincal Bookstore
  * to control the drip.  They are the quietest we have tested.
+ * 
+ * http://www.seattletechnicalbooks.com/product/super-quiet-solenoid
  * 
  * By default this code only supports one solenoid, and uses
  * millis() timing to control when the drops occur.  It must be
  * connected to the DC Motor1 connector.  Use a good 12V/1A power
  * supply.
  * 
- * http://www.seattletechnicalbooks.com/product/super-quiet-solenoid
+ * Happy Coffee Making!
  * 
- * Martin Bogomolni - Tinker and Twist
+ * Martin
  */
+
+#define VERSION "1.0.4"
 
 #include <Wire.h>
 #include <Adafruit_MCP23017.h>
@@ -33,8 +47,6 @@
 #include <Servo.h>
 #include <EEPROM.h>
 #include "colors.h"
-
-#define VERSION "1.0.2"
 
 // Create an Adafruit LCD shield object
 Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
