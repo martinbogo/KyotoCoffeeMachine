@@ -2,7 +2,7 @@
  * Tinker and Twist
  * Kyoto Cold Drip Coffee Maker
  * Copyright 2009 - GPL v3.0
- * V1.0.1
+ * V1.0.2
  * 
  * This code provides control for our Kyoto-style cold drip
  * coffee maker.  Hardware required is an Arduino Uno or 
@@ -17,7 +17,9 @@
  * to control the drip.  They are the quietest we have tested.
  * 
  * By default this code only supports one solenoid, and uses
- * millis() timing to control when the drops occur.
+ * millis() timing to control when the drops occur.  It must be
+ * connected to the DC Motor1 connector.  Use a good 12V/1A power
+ * supply.
  * 
  * http://www.seattletechnicalbooks.com/product/super-quiet-solenoid
  * 
@@ -31,6 +33,8 @@
 #include <Servo.h>
 #include <EEPROM.h>
 #include "colors.h"
+
+#define VERSION "1.0.2"
 
 // Create an Adafruit LCD shield object
 Adafruit_RGBLCDShield lcd = Adafruit_RGBLCDShield();
@@ -58,6 +62,7 @@ uint8_t buttons_last = 0;
 int motor_enable = 1;
 colorState current_color = WHITE;
 boolean bip;
+boolean showonce;
 
 void setup() {
   int i;
@@ -119,7 +124,7 @@ void updateDisplay() {
       }
       buttons = lcd.readButtons();
       if ( buttons & BUTTON_SELECT ) {
-        menuitem = 1;
+        menuitem = 0;
         displaymode = 1;
         lcd.clear();
         break;
@@ -202,18 +207,31 @@ int doMotor() {
    }
 }
 
+/*
+ * Right now, there is only one menu item.  In the future, I 
+ * will add a drop calibration option, which will add a fixed
+ * amount of time to each drop to control the precise amount
+ * of mL per drop, and support for more than one solenoid for
+ * Kyoto brewers that have more than one dropper.
+ */
 void doMenu() {
   motor_enable = 0;
   buttons = 0;
   
   switch (menuitem) {
     case 0:
+      if (showonce) {
+        menuitem = 1;
+        doMenu();
+        break;
+      }
       lcd.clear();
       lcd.setCursor(0,0);
       lcd.print("Menu Item: UP/DN");
       lcd.setCursor(0,1);
       lcd.print("Value: LT/RT/SELECT");
-      while (!buttons) {
+      showonce=1;
+      while ( !buttons ) {
         buttons = lcd.readButtons();
       }
       menuitem = 1;
@@ -242,26 +260,16 @@ void doMenu() {
         lcd.setBacklight(current_color);
         EEPROM.write(0, current_color);
       }
-      if ( buttons & BUTTON_UP ) {
-        menuitem--;
-        if ( menuitem < 1 ) menuitem = 1;
-        break;
-      }
-      if ( buttons & BUTTON_DOWN ) {
-        menuitem++;
-        if ( menuitem > 2 ) menuitem = 2;
-        break;
-      }
       if ( buttons & BUTTON_SELECT ) {
         displaymode = 0;
         motor_enable = 1;
         lcd.clear();
         break;
       }
-      doMenu();
+      doMenu(); // catchall
       break;
     default:
-      doMenu();
+      doMenu(); // catchall
       break;
   }
 }
