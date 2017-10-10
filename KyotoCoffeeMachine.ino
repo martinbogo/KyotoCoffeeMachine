@@ -2,7 +2,7 @@
  * Tinker and Twist
  * Kyoto Cold Drip Coffee Maker
  * Copyright 2009 - GPL v3.0
- * V1.0.0
+ * V1.0.1
  * 
  * This code provides control for our Kyoto-style cold drip
  * coffee maker.  Hardware required is an Arduino Uno or 
@@ -241,26 +241,6 @@ void doMenu() {
         if ( current_color > 0x7 ) current_color = 0x7;
         lcd.setBacklight(current_color);
         EEPROM.write(0, current_color);
-      }
-      if ( buttons & BUTTON_UP ) {
-        menuitem--;
-        if ( menuitem < 1 ) menuitem = 1;
-        break;
-      }
-      if ( buttons & BUTTON_DOWN ) {
-        menuitem++;
-        if ( menuitem > 2 ) menuitem = 2;
-        break;
-      }
-      doMenu();
-      break;
-    case 2:
-      lcd.clear();
-      lcd.setCursor(0,0);
-      lcd.print("Exit <press SEL>");
-      while ( !buttons ) {
-        buttons = lcd.readButtons();
-        delay(25);
       }
       if ( buttons & BUTTON_UP ) {
         menuitem--;
